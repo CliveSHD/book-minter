@@ -1,0 +1,5 @@
+#+title: README
+
+* TODO Features [0/2]
+** TODO Build connect wallet button
+** TODO Build essential form to mint a NFT
