@@ -1,7 +1,9 @@
 import { pinJSONToIPFS } from "./pinata.js";
+import { ethers } from "ethers";
 
-const contractABI = require("../Books.json");
-const contractAddress = "0x92A93E00e8f0D5e68e5876369f37BCb78078391e";
+import Books from "../Books.json";
+const contractABI = Books.abi;
+const contractAddress = "0x8e26d3B8b85B502651b9cDF912AF28555BcBfD53";
 
 export const connectWallet = async () => {
   if (window.ethereum) {
@@ -69,12 +71,7 @@ export const getCurrentWalletConnected = async () => {
 
 export const mintNFT = async (name, description, isbn, amount) => {
   // error handling
-  if (
-    name.trim() == "" ||
-    description.trim() == "" ||
-    isbn.trim() == "" ||
-    amount.trim() == ""
-  ) {
+  if (name.trim() == "" || description.trim() == "" || isbn.trim() == "") {
     return {
       success: false,
       status: "❗️Please make sure all fields are completed before minting.",
@@ -88,36 +85,36 @@ export const mintNFT = async (name, description, isbn, amount) => {
   metadata.isbn = isbn;
 
   // make pinata call
-  const pinataResponse = await pinJSONToIPFS(metadata);
+  const pinataResponse = await pinJSONToIPFS(metadata, `${isbn}.json`);
   if (!pinataResponse.success) {
     return {
       success: false,
       status: "😭 Something went wrong while uploading your tokenURI.",
     };
   }
-  const tokenURI = pinataResponse.pinataUrl;
 
   // load smart contract
-  window.contract = new ethers.Contract(contractAddress, contractABI);
-
-  const transactionParameters = {
-    to: contractAddress,
-    from: window.ethereum.selectedAddress,
-    data: window.contract.methods
-      .mintNFT(window.ethereum.selectedAddress, tokenURI) // TODO need to change
-      .encodeABI(),
-  };
+  // window.contract = new ethers.Contract(contractAddress, contractABI);
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const signer = provider.getSigner();
+  const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
   try {
-    const txHash = await window.ethereum.request({
-      method: "eth_sendTransaction",
-      params: [transactionParameters],
-    });
+    const tx = await contract.mint(
+      await signer.getAddress(),
+      parseInt(isbn),
+      amount
+    );
+
+    const receipt = await tx.wait();
+
+    console.log("Transaction mined:", receipt);
+
     return {
       success: true,
       status:
         "✅ Check out your transaction on Etherscan: https://goerli.etherscan.io/tx/" +
-        txHash,
+        receipt.transactionHash,
     };
   } catch (error) {
     return {

@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
-import { connectWallet, getCurrentWalletConnected } from "./utils/interact";
+import {
+  connectWallet,
+  getCurrentWalletConnected,
+  mintNFT,
+} from "./utils/interact";
 
 const Minter = (props) => {
   const [walletAddress, setWallet] = useState("");
   const [status, setStatus] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [ISBN, setISBN] = useState("");
   const [url, setURL] = useState("");
 
   useEffect(() => {
@@ -40,7 +45,8 @@ const Minter = (props) => {
   };
 
   const onMintPressed = async () => {
-    // TODO
+    const { status } = await mintNFT(name, description, ISBN, 100);
+    setStatus(status);
   };
 
   return (
@@ -77,6 +83,13 @@ const Minter = (props) => {
           type="text"
           placeholder="Talk about the content in this book."
           onChange={(event) => setDescription(event.target.value)}
+        />
+
+        <h2>ISBN: </h2>
+        <input
+          type="text"
+          placeholder="ISBN number of this book."
+          onChange={(event) => setISBN(event.target.value)}
         />
       </form>
       <button id="mintButton" onClick={onMintPressed}>
