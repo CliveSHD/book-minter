@@ -6,14 +6,17 @@ import axios from "axios";
 
 export const pinJSONToIPFS = async (jsonObject, fileName) => {
   const url = "https://api.pinata.cloud/pinning/pinFileToIPFS";
-  const folderHash = "QmTr73hNjB332a76pJW4Y7jiD91ApTK8SwsR3ipENZGBuC";
 
   const jsonBlob = new Blob([JSON.stringify(jsonObject)], {
     type: "application/json",
   });
   const formData = new FormData();
   formData.append("file", jsonBlob, fileName);
-  formData.append("parents", folderHash);
+
+  const options = JSON.stringify({
+    wrapWithDirectory: true,
+  });
+  formData.append("pinataOptions", options);
 
   return axios
     .post(url, formData, {
