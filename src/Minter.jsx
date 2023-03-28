@@ -4,6 +4,14 @@ import {
   getCurrentWalletConnected,
   mintNFT,
 } from "./utils/interact";
+import {
+  Button,
+  Input,
+  Textarea,
+  Stack,
+  Heading,
+  Container,
+} from "@chakra-ui/react";
 
 const Minter = (props) => {
   const [walletAddress, setWallet] = useState("");
@@ -54,53 +62,62 @@ const Minter = (props) => {
   };
 
   return (
-    <div>
-      <button id="walletButton" onClick={connectWalletPressed}>
-        {walletAddress.length > 0 ? (
-          "Connected: " +
-          String(walletAddress).substring(0, 6) +
-          "..." +
-          String(walletAddress).substring(38)
-        ) : (
-          <span>Connect Wallet</span>
-        )}
-      </button>
+    <Container maxW="xl">
+      <Stack spacing={3}>
+        <Button id="walletButton" onClick={connectWalletPressed}>
+          {walletAddress.length > 0 ? (
+            "Connected: " +
+            String(walletAddress).substring(0, 6) +
+            "..." +
+            String(walletAddress).substring(38)
+          ) : (
+            <span>Connect Wallet</span>
+          )}
+        </Button>
 
-      <br></br>
-      <h1 id="title">📚 Book Minter</h1>
-      <p>
-        Simply upload your book file and add information, then press "Mint."
-      </p>
-      <form>
-        <h2>Upload your book file: </h2>
-        <input type="file" onChange={fileUploader} accept=".epub" />
+        <br></br>
+        <Heading id="title">📚 Book Minter</Heading>
+        <p>
+          Simply upload your book file and add information, then press "Mint
+          Book."
+        </p>
+        <form>
+          <Stack spacing={3}>
+            <Heading size="md">Upload Your Book File: </Heading>
+            <Input
+              type="file"
+              onChange={fileUploader}
+              accept=".epub"
+              variant="flushed"
+            />
 
-        <h2>Name: </h2>
-        <input
-          type="text"
-          placeholder="An amazing book."
-          onChange={(event) => setName(event.target.value)}
-        />
+            <Heading size="md">Book Name: </Heading>
+            <Input
+              type="text"
+              placeholder="An amazing book."
+              onChange={(event) => setName(event.target.value)}
+            />
 
-        <h2>Description: </h2>
-        <input
-          type="text"
-          placeholder="Talk about the content in this book."
-          onChange={(event) => setDescription(event.target.value)}
-        />
+            <Heading size="md">Description: </Heading>
+            <Textarea
+              placeholder="Talk about the content in this book."
+              onChange={(event) => setDescription(event.target.value)}
+            />
 
-        <h2>ISBN: </h2>
-        <input
-          type="text"
-          placeholder="ISBN number of this book."
-          onChange={(event) => setISBN(event.target.value)}
-        />
-      </form>
-      <button id="mintButton" onClick={onMintPressed}>
-        Mint Book
-      </button>
-      <p id="status">{status}</p>
-    </div>
+            <Heading size="md">ISBN: </Heading>
+            <Input
+              type="text"
+              placeholder="ISBN number of this book."
+              onChange={(event) => setISBN(event.target.value)}
+            />
+          </Stack>
+        </form>
+        <Button id="mintButton" onClick={onMintPressed} colorScheme="teal">
+          Mint Book
+        </Button>
+        <p id="status">{status}</p>
+      </Stack>
+    </Container>
   );
 };
 

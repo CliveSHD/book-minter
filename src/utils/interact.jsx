@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 
 import Books from "../Books.json";
 const contractABI = Books.abi;
-const contractAddress = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
+const contractAddress = "0xa5c8fCa3C60997fa5A86fBeBD346415f451D1441";
 
 export const connectWallet = async () => {
   if (window.ethereum) {
@@ -120,7 +120,7 @@ export const mintNFT = async (file, name, description, isbn, amount) => {
     const tx = await contract.mint(
       parseInt(isbn),
       amount,
-      pinataResponse.pinataUrl
+      pinataResponse.pinataUrl + isbn + ".json"
     );
 
     const receipt = await tx.wait();
@@ -131,7 +131,7 @@ export const mintNFT = async (file, name, description, isbn, amount) => {
     return {
       success: true,
       status:
-        "✅ Check out your transaction on Etherscan: https://goerli.etherscan.io/tx/" +
+        "✅ Check out your transaction on Etherscan: https://sepolia.etherscan.io//tx/" +
         receipt.transactionHash,
     };
   } catch (error) {

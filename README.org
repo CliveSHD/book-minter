@@ -1,5 +1,10 @@
-#+title: README
+#+title: Book Minter
 
-* TODO Features [0/2]
-** TODO Build connect wallet button
-** TODO Build essential form to mint a NFT
+* Idea
+I love reading books, so I decided to create a DApp that allows me to create my own e-books and mint them as NFTs.
+
+* Back end
+I chose ERC-1155 so that I can mint multiple copies of a book.
+
+* Front end
+React + Chakra UI + Vite.
