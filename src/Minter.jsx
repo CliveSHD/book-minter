@@ -11,7 +11,7 @@ const Minter = (props) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [ISBN, setISBN] = useState("");
-  const [url, setURL] = useState("");
+  const [file, setFile] = useState();
 
   useEffect(() => {
     getCurrentWalletConnected().then((result) => {
@@ -38,6 +38,10 @@ const Minter = (props) => {
     }
   }
 
+  const fileUploader = (event) => {
+    setFile(event.target.files[0]);
+  };
+
   const connectWalletPressed = async () => {
     const walletResponse = await connectWallet();
     setStatus(walletResponse.status);
@@ -45,7 +49,7 @@ const Minter = (props) => {
   };
 
   const onMintPressed = async () => {
-    const { status } = await mintNFT(name, description, ISBN, 100);
+    const { status } = await mintNFT(file, name, description, ISBN, 100);
     setStatus(status);
   };
 
@@ -69,7 +73,7 @@ const Minter = (props) => {
       </p>
       <form>
         <h2>Upload your book file: </h2>
-        <input type="file" accept=".epub" />
+        <input type="file" onChange={fileUploader} accept=".epub" />
 
         <h2>Name: </h2>
         <input

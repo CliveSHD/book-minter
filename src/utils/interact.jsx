@@ -1,9 +1,9 @@
-import { pinJSONToIPFS } from "./pinata.js";
+import { pinJSONToIPFS, pinFileToIPFS } from "./pinata.js";
 import { ethers } from "ethers";
 
 import Books from "../Books.json";
 const contractABI = Books.abi;
-const contractAddress = "0x8e26d3B8b85B502651b9cDF912AF28555BcBfD53";
+const contractAddress = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
 
 export const connectWallet = async () => {
   if (window.ethereum) {
@@ -69,12 +69,25 @@ export const getCurrentWalletConnected = async () => {
   }
 };
 
-export const mintNFT = async (name, description, isbn, amount) => {
+export const mintNFT = async (file, name, description, isbn, amount) => {
   // error handling
-  if (name.trim() == "" || description.trim() == "" || isbn.trim() == "") {
+  if (
+    !file ||
+    name.trim() == "" ||
+    description.trim() == "" ||
+    isbn.trim() == ""
+  ) {
     return {
       success: false,
       status: "❗️Please make sure all fields are completed before minting.",
+    };
+  }
+
+  const pinataFileResponse = await pinFileToIPFS(file);
+  if (!pinataFileResponse.success) {
+    return {
+      success: false,
+      status: "😭 Something went wrong while uploading your file.",
     };
   }
 
@@ -82,7 +95,8 @@ export const mintNFT = async (name, description, isbn, amount) => {
   const metadata = new Object();
   metadata.name = name;
   metadata.description = description;
-  metadata.isbn = isbn;
+  metadata.isbn = isbn.replace(/-/g, "");
+  metadata.file = pinataFileResponse.pinataUrl;
 
   // make pinata call
   const pinataResponse = await pinJSONToIPFS(metadata, `${isbn}.json`);
@@ -99,17 +113,21 @@ export const mintNFT = async (name, description, isbn, amount) => {
   const signer = provider.getSigner();
   const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
+  // Test
+  console.log(pinataResponse.pinataUrl);
+
   try {
     const tx = await contract.mint(
-      await signer.getAddress(),
       parseInt(isbn),
-      amount
+      amount,
+      pinataResponse.pinataUrl
     );
 
     const receipt = await tx.wait();
 
     console.log("Transaction mined:", receipt);
 
+    console.log(await contract.uri(123));
     return {
       success: true,
       status:

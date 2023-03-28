@@ -32,7 +32,44 @@ export const pinJSONToIPFS = async (jsonObject, fileName) => {
       return {
         success: true,
         pinataUrl:
-          "https://gateway.pinata.cloud/ipfs/" + response.data.ipfsHash,
+          "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash + "/",
+      };
+    })
+    .catch(function (error) {
+      console.log(error);
+      return {
+        success: false,
+        message: error.message,
+      };
+    });
+};
+
+export const pinFileToIPFS = async (file) => {
+  const url = "https://api.pinata.cloud/pinning/pinFileToIPFS";
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const options = JSON.stringify({
+    wrapWithDirectory: true,
+  });
+  formData.append("pinataOptions", options);
+
+  return axios
+    .post(url, formData, {
+      maxBodyLength: "Infinity",
+      headers: {
+        "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+        Authorization: JWT,
+        // pinata_api_key: key,
+        // pinata_secret_api_key: secret,
+      },
+    })
+    .then(function (response) {
+      return {
+        success: true,
+        pinataUrl:
+          "https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash + "/",
       };
     })
     .catch(function (error) {
