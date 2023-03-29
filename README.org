@@ -1,4 +1,3 @@
-#+title: Book Minter
 
 * Introduction
 I love reading books, so I decided to create a DApp that allows me to create my own e-books and mint them as NFTs.
