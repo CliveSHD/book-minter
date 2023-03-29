@@ -1,10 +1,23 @@
 #+title: Book Minter
 
-* Idea
+* Introduction
 I love reading books, so I decided to create a DApp that allows me to create my own e-books and mint them as NFTs.
 
+What the app can do:
+1. Connect your wallet
+2. Choose a book file (epub) to upload
+3. Enter your book's name
+4. Write an introduction or description
+5. Enter the ISBN number if available
+6. Press the "Mint Book" button
+7. Wait a moment, and your book will become an NFT on the Sepolia network
+
 * Back end
+Solidity + Ethers + Hardhat.
+
 I chose ERC-1155 so that I can mint multiple copies of a book.
+
+The contract is deployed on the Sepolia test network.
 
 * Front end
 React + Chakra UI + Vite.

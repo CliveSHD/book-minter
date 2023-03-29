@@ -20,6 +20,7 @@ const Minter = (props) => {
   const [description, setDescription] = useState("");
   const [ISBN, setISBN] = useState("");
   const [file, setFile] = useState();
+  const [isloading, setIsLoading] = useState(false);
 
   useEffect(() => {
     getCurrentWalletConnected().then((result) => {
@@ -57,8 +58,10 @@ const Minter = (props) => {
   };
 
   const onMintPressed = async () => {
+    setIsLoading(true);
     const { status } = await mintNFT(file, name, description, ISBN, 100);
     setStatus(status);
+    setIsLoading(false);
   };
 
   return (
@@ -112,7 +115,13 @@ const Minter = (props) => {
             />
           </Stack>
         </form>
-        <Button id="mintButton" onClick={onMintPressed} colorScheme="teal">
+        <Button
+          id="mintButton"
+          onClick={onMintPressed}
+          isLoading={isloading}
+          loadingText="Minting"
+          colorScheme="teal"
+        >
           Mint Book
         </Button>
         <p id="status">{status}</p>
